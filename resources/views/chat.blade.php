@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}"><title>Chat · Order support</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}"><title>{{ ($manualChat ?? false) ? 'Manual agent' : 'SDK agent' }} · Order support</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#e7ece9] font-sans text-slate-800 dark:bg-slate-950 dark:text-slate-100">
-    <main data-conversations-url="{{ route('support-conversations.index') }}" data-send-url="{{ route('support-conversations.store') }}" class="mx-auto flex h-dvh max-w-6xl overflow-hidden bg-white md:my-[4dvh] md:h-[92dvh] md:rounded-2xl md:shadow-xl dark:bg-slate-900">
+    <main data-conversations-url="{{ route(($manualChat ?? false) ? 'manual-conversations.index' : 'support-conversations.index') }}" data-send-url="{{ route(($manualChat ?? false) ? 'manual-conversations.store' : 'support-conversations.store') }}" class="mx-auto flex h-dvh max-w-6xl overflow-hidden bg-white md:my-[4dvh] md:h-[92dvh] md:rounded-2xl md:shadow-xl dark:bg-slate-900">
         <aside class="hidden w-80 shrink-0 flex-col border-r border-slate-200 md:flex dark:border-slate-800">
             <header class="flex items-center justify-between px-6 py-6">
                 <h1 class="text-2xl font-semibold tracking-tight">Chats<span class="text-emerald-600">.</span></h1>
@@ -40,7 +40,8 @@
                 </form>
             </header>
             <div class="border-b border-amber-100 bg-amber-50 px-4 py-2 text-center text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
-                Order status support · Your conversations are saved to your account.
+                {{ ($manualChat ?? false) ? 'Manual agent · Direct OpenAI function calling' : 'Laravel AI SDK agent' }} · Your conversations are saved.
+                <a href="{{ route(($manualChat ?? false) ? 'chat.show' : 'manual-chat.show') }}" class="ml-2 underline">Switch to {{ ($manualChat ?? false) ? 'SDK' : 'manual' }} chat</a>
             </div>
             <div class="flex items-center gap-2 border-b border-slate-200 bg-white px-4 py-2 dark:border-slate-800 dark:bg-slate-900">
                 <label for="conversation-select" class="sr-only">Select conversation</label>

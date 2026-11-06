@@ -37,6 +37,8 @@ return [
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
         'model' => env('OPENAI_MODEL', 'gpt-4.1-mini'),
+        'agent_max_rounds' => 4,
+        'agent_max_tool_calls' => 6,
     ],
 
 ];

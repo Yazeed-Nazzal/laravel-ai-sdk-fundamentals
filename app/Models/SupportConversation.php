@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id', 'last_response_id'])]
+#[Fillable(['user_id', 'last_response_id', 'agent_driver'])]
 class SupportConversation extends Model
 {
     use HasFactory;
