@@ -2,25 +2,27 @@
 
 namespace App\Ai\Agents;
 
+use App\Ai\Middleware\ResumeSupportConversation;
 use App\Ai\Tools\GetOrderStatus;
 use App\Models\User;
 use App\Services\OrderService;
 use Laravel\Ai\Attributes\MaxSteps;
 use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasMiddleware;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Promptable;
 
 #[MaxSteps(3)]
 #[Model('gpt-6-luna')]
-class OrderSupportAgent implements Agent, HasTools
+class OrderSupportAgent implements Agent, HasMiddleware, HasTools
 {
     use Promptable;
 
     private readonly int $customerId;
 
     /** The customer must come from authenticated server-side context. */
-    public function __construct(User $customer, private readonly OrderService $orders)
+    public function __construct(User $customer, private readonly OrderService $orders, private readonly ?string $previousResponseId = null)
     {
         $this->customerId = (int) $customer->getAuthIdentifier();
     }
@@ -44,5 +46,11 @@ class OrderSupportAgent implements Agent, HasTools
     public function tools(): iterable
     {
         return [new GetOrderStatus($this->orders, $this->customerId)];
+    }
+
+    /** @return list<ResumeSupportConversation> */
+    public function middleware(): array
+    {
+        return [new ResumeSupportConversation($this->previousResponseId)];
     }
 }

@@ -13,6 +13,7 @@
             <h1 class="text-3xl font-semibold tracking-tight">Order support</h1>
             <p class="text-slate-600 dark:text-slate-400">Ask about your order and see the assistant’s response below.</p>
         </header>
+        <a href="{{ route('chat.show') }}" class="text-sm text-indigo-600 hover:underline dark:text-indigo-400">Open chat preview</a>
         <a href="{{ route('direct-assistant.show') }}" class="text-sm text-indigo-600 hover:underline dark:text-indigo-400">Try the direct assistant</a>
 
             <div class="flex items-center justify-between gap-4">

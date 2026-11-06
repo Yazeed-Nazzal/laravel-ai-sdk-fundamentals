@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Ai\Agents\OrderSupportAgent;
-use App\Services\OrderService;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,11 +12,11 @@ use Laravel\Ai\Responses\Data\FinishReason;
 
 class OrderSupportController extends Controller
 {
-    public function __invoke(Request $request, OrderService $orders): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         $validated = $request->validate(['message' => ['required', 'string', 'max:2000']]);
         try {
-            $response = (new OrderSupportAgent($request->user(), $orders))->prompt($validated['message']);
+            $response = OrderSupportAgent::make(customer: $request->user())->prompt($validated['message']);
         } catch (RateLimitedException) {
             return response()->json(['message' => 'The assistant is busy. Please try again later.'], 429);
         } catch (AiException|RequestException) {
