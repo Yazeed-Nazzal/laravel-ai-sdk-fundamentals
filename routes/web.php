@@ -5,6 +5,7 @@ use App\Http\Controllers\ManualConversationController;
 use App\Http\Controllers\OrderSupportController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SupportConversationController;
+use App\Http\Controllers\TechnicalSupportIssueController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/login', 'login')->middleware('guest')->name('login');
@@ -41,4 +42,15 @@ Route::middleware('auth')->group(function (): void {
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Structured Outputs exercise: only staff may manage the issue queue.
+Route::middleware('auth')->group(function (): void {
+    Route::get('/technical-support/chat', [TechnicalSupportIssueController::class, 'create'])->name('technical-support.chat');
+    Route::post('/technical-support/issues', [TechnicalSupportIssueController::class, 'store'])->middleware('throttle:10,1')->block(60, 10)->name('technical-support.store');
+    Route::delete('/technical-support/draft', [TechnicalSupportIssueController::class, 'destroy'])->block(60, 10)->name('technical-support.reset');
+    Route::middleware('can:manage-support-issues')->group(function (): void {
+        Route::get('/technical-support/issues', [TechnicalSupportIssueController::class, 'index'])->name('technical-support.index');
+        Route::patch('/technical-support/issues/{issue}', [TechnicalSupportIssueController::class, 'update'])->name('technical-support.update');
+    });
 });
